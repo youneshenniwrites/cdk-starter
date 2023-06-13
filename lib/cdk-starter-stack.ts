@@ -9,7 +9,7 @@ export class BucketL3 extends Construct {
     super(scope, id);
 
     // Create an S3 bucket
-    this.bucketL3 = new Bucket(this, "L3Bucket", {
+    new Bucket(this, "L3Bucket", {
       lifecycleRules: [
         {
           expiration: Duration.days(expiration),
@@ -22,31 +22,31 @@ export class BucketL3 extends Construct {
 export class CdkStarterStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
-  }
 
-  // Create an S3 bucket
-  bucketL1 = new CfnBucket(this, "MyL1Bucket", {
-    lifecycleConfiguration: {
-      rules: [
+    // Create an S3 bucket
+    new CfnBucket(this, "MyL1Bucket", {
+      lifecycleConfiguration: {
+        rules: [
+          {
+            expirationInDays: 1,
+            status: "Enabled",
+          },
+        ],
+      },
+    });
+
+    const myL2Bucket = new Bucket(this, "MyL2Bucket", {
+      lifecycleRules: [
         {
-          expirationInDays: 1,
-          status: "Enabled",
+          expiration: Duration.days(2),
         },
       ],
-    },
-  });
+    });
 
-  bucketL2 = new Bucket(this, "MyL2Bucket", {
-    lifecycleRules: [
-      {
-        expiration: Duration.days(2),
-      },
-    ],
-  });
+    new CfnOutput(this, "MyL2BucketName", {
+      value: myL2Bucket.bucketName,
+    });
 
-  output = new CfnOutput(this, "MyL2BucketName", {
-    value: this.bucketL2.bucketName,
-  });
-
-  bucketL3 = new BucketL3(this, "MyL3Bucket", 3);
+    new BucketL3(this, "MyL3Bucket", 3);
+  }
 }
