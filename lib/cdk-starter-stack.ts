@@ -1,4 +1,4 @@
-import { Stack, StackProps, Duration } from "aws-cdk-lib";
+import { Stack, StackProps, Duration, CfnOutput } from "aws-cdk-lib";
 import { Bucket, CfnBucket } from "aws-cdk-lib/aws-s3";
 import { Construct } from "constructs";
 
@@ -42,6 +42,10 @@ export class CdkStarterStack extends Stack {
         expiration: Duration.days(2),
       },
     ],
+  });
+
+  output = new CfnOutput(this, "MyL2BucketName", {
+    value: this.bucketL2.bucketName,
   });
 
   bucketL3 = new BucketL3(this, "MyL3Bucket", 3);
